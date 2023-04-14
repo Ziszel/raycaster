@@ -70,7 +70,7 @@ float Player::Dist(float& ax, float& ay, float& bx, float& by, float& ang)
 
 void Player::CheckRays(std::unique_ptr<Map>& map) {
     int r, mx, my, mp, dof; // rayNum, mapX, mapY, mapPos, Depth of Field
-    float rx, ry, ra, xo, yo; // rayX, rayY, rayAngle, xOffset, yOffset
+    float rx, ry, ra, xo, yo, disT; // rayX, rayY, rayAngle, xOffset, yOffset, distance of current ray
     float degree_in_radians = 0.0174533;
     int rays_to_cast = 60;
     ra = angle - degree_in_radians * 30; // offset the initial ray by 30 degrees.
@@ -130,7 +130,7 @@ void Player::CheckRays(std::unique_ptr<Map>& map) {
                 dof += 1;
             }
         }
-        // --- horizontal ---
+        // --- vertical ---
         dof = 0;
         float disH = 100000.0f;
         float hx = position.x;
@@ -177,11 +177,30 @@ void Player::CheckRays(std::unique_ptr<Map>& map) {
         if (disV < disH) {
             rx = vx;
             ry = vy;
+            disT = disV;
         }
         if (disH < disV) {
             rx = hx;
             ry = hy;
+            disT = disH;
         }
+        // Draw 3D
+        float ca = angle - ra; // distance between the player's current angle and the ray angle
+        // Limits to ensure ca does not go out of bounds, crashing the application
+        if (ca < 0) { ca += 2 * PI; }
+        if (ca > 2 * PI) { ca -= 2 * PI; }
+        disT = disT * cos(ca); // multiplying the ray distance by the cosine of the new angle (ca) fixes the fisheye effect
+        // Line height
+        float lineH = map->map_size_x * 720 / disT; // line height
+        float lineO = 360 - lineH / 2; // line offset
+        if (lineH > 720)
+        {
+            lineH = 720;
+        }
+        // TODO: draw lineH which will represent the 3D world
+        DrawLine(r * 4 + 640, 720, r * 4 + 640, lineH, WHITE);
+
+        // Draw 2D
         DrawLine(position.x + size.x / 2, position.y + size.y / 2, rx, ry, GREEN);
         ra += degree_in_radians; // increment the angle of the ray for drawing the next ray
         if (ra < 0)
