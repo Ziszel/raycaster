@@ -71,9 +71,20 @@ float Player::Dist(float& ax, float& ay, float& bx, float& by, float& ang)
 void Player::CheckRays(std::unique_ptr<Map>& map) {
     int r, mx, my, mp, dof; // rayNum, mapX, mapY, mapPos, Depth of Field
     float rx, ry, ra, xo, yo; // rayX, rayY, rayAngle, xOffset, yOffset
-    ra = angle;
+    float degree_in_radians = 0.0174533;
+    int rays_to_cast = 60;
+    ra = angle - degree_in_radians * 30; // offset the initial ray by 30 degrees.
+    if (ra < 0)
+    {
+        ra += 2 * PI;
+    }
+    if (ra > 2 * PI)
+    {
+        ra -= 2 * PI;
+    }
+
     // check which line the ray hits a wall first (horizontal or vertical)
-    for (r = 0; r < 1; ++r) {
+    for (r = 0; r < rays_to_cast; ++r) {
         // --- horizontal lines ---
         dof = 0;
         float disV = 100000.0f;
@@ -171,6 +182,15 @@ void Player::CheckRays(std::unique_ptr<Map>& map) {
             rx = hx;
             ry = hy;
         }
-        DrawLine(position.x, position.y, rx, ry, GREEN);
+        DrawLine(position.x + size.x / 2, position.y + size.y / 2, rx, ry, GREEN);
+        ra += degree_in_radians; // increment the angle of the ray for drawing the next ray
+        if (ra < 0)
+        {
+            ra += 2 * PI;
+        }
+        if (ra > 2 * PI)
+        {
+            ra -= 2 * PI;
+        }
     }
 }
