@@ -191,14 +191,17 @@ void Player::CheckRays(std::unique_ptr<Map>& map) {
         if (ca > 2 * PI) { ca -= 2 * PI; }
         disT = disT * cos(ca); // multiplying the ray distance by the cosine of the new angle (ca) fixes the fisheye effect
         // Line height
-        float lineH = map->map_size_x * 720 / disT; // line height
+        float lineH = map->map_size_y * 1920 / disT; // line height
         float lineO = 360 - lineH / 2; // line offset
-        if (lineH > 720)
+        if (lineH > 1920)
         {
-            lineH = 720;
+            lineH = 1920;
         }
-        // TODO: draw lineH which will represent the 3D world
-        DrawLine(r * 4 + 640, 720, r * 4 + 640, lineH, WHITE);
+        // TODO: draw lineH which will represent the 3D world, for loop creates line width
+        for (int i = 0; i < 10; i+=2)
+        {
+            DrawLine(r * 16 + 640 + i, 0, r * 16 + 640 + i, lineH, WHITE);
+        }
 
         // Draw 2D
         DrawLine(position.x + size.x / 2, position.y + size.y / 2, rx, ry, GREEN);
