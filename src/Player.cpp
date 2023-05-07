@@ -218,8 +218,8 @@ void Player::CheckRays(std::unique_ptr<Map>& map) {
             // to from 0 to lineH on the y
             // For x: the ray * the size of the block + midpoint + iteration
             // For y: 0 -> lineH (the size of the wall calculated with distance from player)
-            DrawLine(ray_num * map->block_size.x + 640 + i, 0,
-                     ray_num * map->block_size.x + 640 + i, lineH, WHITE);
+            DrawLine(ray_num * 10 + 640 + i, 0,
+                     ray_num * 10 + 640 + i, lineH, WHITE);
         }
 
         // Draw 2D
